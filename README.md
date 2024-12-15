@@ -17,7 +17,7 @@
 ## English
 
 ### Introduction
-Turn2Markdown is a powerful web tool that converts Office documents (DOCX, PDF, XLSX, PPTX) into Markdown format. Built with Vue 3 and Ant Design Vue, it provides a clean and intuitive interface for easy document conversion.
+Turn2Markdown is a web tool based on [microsoft/markitdown](https://github.com/microsoft/markitdown) that converts Office documents (DOCX, PDF, XLSX, PPTX) into Markdown format. 
 
 ### Features
 - 🚀 Quick conversion of Office documents to Markdown
@@ -58,7 +58,7 @@ This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE) f
 ## 简体中文
 
 ### 简介
-Turn2Markdown 是一个强大的网页工具，可以将 Office 文档（DOCX、PDF、XLSX、PPTX）转换为 Markdown 格式。使用 Vue 3 和 Ant Design Vue 构建，提供清晰直观的界面，让文档转换变得简单。
+Turn2Markdown 是一个基于[microsoft/markitdown](https://github.com/microsoft/markitdown)的网页工具，可以将 Office 文档（DOCX、PDF、XLSX、PPTX）转换为 Markdown 格式。
 
 ### 特性
 - 🚀 快速将 Office 文档转换为 Markdown
