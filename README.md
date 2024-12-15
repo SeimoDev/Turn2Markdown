@@ -14,7 +14,7 @@
 [Server | 后端](https://github.com/SeimoDev/Turn2Markdown-Server)
 </div>
 
-[Preview | 预览](https://md seimo.cn)
+[Preview | 预览](https://md.seimo.cn)
 
 ## English
 
