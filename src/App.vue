@@ -1,70 +1,84 @@
 <template>
-  <div class="container">
-    <!-- GitHub 角标 -->
-    <div class="github-corner">
-      <a-button type="link" class="github-button" href="https://github.com/SeimoDev/Turn2Markdown" target="_blank">
-        <a-space>
-          <github-outlined style="font-size: 24px" />
-          <span>Star on GitHub</span>
-          <star-outlined style="font-size: 20px" />
-        </a-space>
-      </a-button>
-    </div>
-    <a-card class="upload-card" :bordered="false">
-      <h1 class="title">Turn2Markdown</h1>
-      <p class="description">一键将 Office 文档转换为 Markdown 格式<br><p style="color: red;">暂不支持图片内容</p></p>
-
-      <a-space direction="vertical" size="large" style="width: 100%">
-        <a-upload :before-upload="beforeUpload" :show-upload-list="false" accept=".docx,.pdf,.xlsx,.pptx">
-          <a-button type="primary" size="large">
-            <template #icon><upload-outlined /></template>
-            选择文件
-          </a-button>
-        </a-upload>
-
-        <div v-if="selectedFile" class="file-info">
-          <a-space align="center">
-            <file-outlined style="font-size: 20px" />
-            <span style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-              {{ selectedFile.name }}
-            </span>
-            <a-button type="primary" @click="uploadFile" :loading="uploading">
-              开始转换
-            </a-button>
+  <a-config-provider :theme="{ algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }">
+    <div class="container">
+      <!-- 添加暗色模式切换按钮 -->
+      <div class="theme-switch">
+        <a-button type="link" @click="toggleTheme">
+          <template #icon>
+            <BulbOutlined v-if="isDarkMode" />
+            <BulbFilled v-else />
+          </template>
+        </a-button>
+      </div>
+      
+      <!-- GitHub 角标 -->
+      <div class="github-corner">
+        <a-button type="link" class="github-button" href="https://github.com/SeimoDev/Turn2Markdown" target="_blank">
+          <a-space>
+            <github-outlined style="font-size: 24px" />
+            <span>Star on GitHub</span>
+            <star-outlined style="font-size: 20px" />
           </a-space>
-        </div>
+        </a-button>
+      </div>
+      <a-card class="upload-card" :bordered="false">
+        <h1 class="title">Turn2Markdown</h1>
+        <p class="description">一键将 Office 文档转换为 Markdown 格式</p>
+        <p style="color: red;">暂不支持图片内容</p>
 
-        <template v-if="conversionSuccess">
-          <a-alert type="success" show-icon class="success-message">
-            <template #message>
-              <div class="success-content">
-                <p>转换成功！文件将在 10 分钟后自动删除</p>
-                <a-button type="primary" @click="downloadFile">
-                  <template #icon><download-outlined /></template>
-                  下载 Markdown
-                </a-button>
-              </div>
-            </template>
-          </a-alert>
-        </template>
+        <a-space direction="vertical" size="large" style="width: 100%">
+          <a-upload :before-upload="beforeUpload" :show-upload-list="false" accept=".docx,.pdf,.xlsx,.pptx">
+            <a-button type="primary" size="large">
+              <template #icon><upload-outlined /></template>
+              选择文件
+            </a-button>
+          </a-upload>
 
-        <a-alert v-if="errorMessage" :message="errorMessage" type="error" show-icon class="error-message" />
-      </a-space>
-    </a-card>
+          <div v-if="selectedFile" class="file-info">
+            <a-space align="center">
+              <file-outlined style="font-size: 20px" />
+              <span style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                {{ selectedFile.name }}
+              </span>
+              <a-button type="primary" @click="uploadFile" :loading="uploading">
+                开始转换
+              </a-button>
+            </a-space>
+          </div>
 
-    <div class="github-link">
-      <a-space>
-        <github-outlined style="font-size: 20px" />
-        <a href="https://github.com/microsoft/markitdown" target="_blank" rel="noopener noreferrer">
-          Powered by Microsoft MarkItDown
-        </a>
-      </a-space>
+          <template v-if="conversionSuccess">
+            <a-alert type="success" show-icon class="success-message">
+              <template #message>
+                <div class="success-content">
+                  <p>转换成功！文件将在 10 分钟后自动删除，请及时下载！</p>
+                  <a-button type="primary" @click="downloadFile">
+                    <template #icon><download-outlined /></template>
+                    下载 Markdown
+                  </a-button>
+                </div>
+              </template>
+            </a-alert>
+          </template>
+
+          <a-alert v-if="errorMessage" :message="errorMessage" type="error" show-icon class="error-message" />
+        </a-space>
+      </a-card>
+
+      <div class="github-link">
+        <a-space>
+          <github-outlined style="font-size: 20px" />
+          <a href="https://github.com/microsoft/markitdown" target="_blank" rel="noopener noreferrer">
+            Powered by Microsoft MarkItDown
+          </a>
+        </a-space>
+      </div>
     </div>
-  </div>
+  </a-config-provider>
 </template>
 
 <script>
-import { UploadOutlined, FileOutlined, DownloadOutlined, GithubOutlined } from '@ant-design/icons-vue';
+import { UploadOutlined, FileOutlined, DownloadOutlined, GithubOutlined, BulbOutlined, BulbFilled } from '@ant-design/icons-vue';
+import { theme } from 'ant-design-vue';  // 导入主题配置
 import axios from 'axios';
 
 export default {
@@ -73,6 +87,8 @@ export default {
     FileOutlined,
     DownloadOutlined,
     GithubOutlined,
+    BulbOutlined,
+    BulbFilled,
   },
   data() {
     return {
@@ -81,6 +97,8 @@ export default {
       uploading: false,
       conversionSuccess: false,
       downloadUrl: '',
+      isDarkMode: false,
+      theme,  // 添加 theme 到 data 中
     };
   },
   methods: {
@@ -120,10 +138,10 @@ export default {
         };
 
         console.log('Sending request to server...');
-        const response = await axios.post('http://127.0.0.1:8000/uploadfile/', formData, config);
+        const response = await axios.post('https://mdapi.seimo.cn/uploadfile/', formData, config);
         console.log('Response:', response.data);
 
-        this.downloadUrl = `http://127.0.0.1:8000/output/${response.data.original_filename}.md`;
+        this.downloadUrl = `https://mdapi.seimo.cn/output/${response.data.original_filename}.md`;
         this.conversionSuccess = true;
         this.errorMessage = '';
         this.selectedFile = null;
@@ -174,7 +192,25 @@ export default {
       if (this.downloadUrl) {
         window.open(this.downloadUrl, '_blank');
       }
-    }
+    },
+
+    toggleTheme() {
+      this.isDarkMode = !this.isDarkMode;
+      // 更新 HTML 属性以便自定义样式可以生效
+      document.documentElement.setAttribute('data-theme', this.isDarkMode ? 'dark' : 'light');
+    },
+  },
+  mounted() {
+    // 检查系统主题偏好
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    this.isDarkMode = prefersDark;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    
+    // 监听系统主题变化
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      this.isDarkMode = e.matches;
+      document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+    });
   },
 };
 </script>
@@ -196,20 +232,31 @@ export default {
   margin: 0 auto;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #FFFFFF;
 }
 
 .upload-card:hover {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
 @media (prefers-color-scheme: dark) {
   .upload-card {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background-color: #262626;
   }
 
   .upload-card:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   }
+}
+
+[data-theme='dark'] .upload-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #262626;
+}
+
+[data-theme='dark'] .upload-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .title {
@@ -260,7 +307,7 @@ export default {
   left: 50%;
   transform: translateX(-50%);
   padding: 8px 16px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: #FFFFFF;
   border-radius: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
@@ -286,7 +333,7 @@ export default {
 
 @media (prefers-color-scheme: dark) {
   .github-link {
-    background-color: rgba(0, 0, 0, 0.6);
+    background-color: #262626;
   }
 
   .github-link a {
@@ -393,7 +440,7 @@ export default {
 
 /* 文件信息样式 */
 .file-info .ant-space {
-  background: #f8f8f8;
+  background: #FFFFFF;
   padding: 12px;
   border-radius: 8px;
   transition: all 0.3s ease;
@@ -422,7 +469,7 @@ export default {
 }
 
 .github-button {
-  background: rgba(255, 255, 255, 0.9);
+  background: #FFFFFF;
   border-radius: 24px;
   padding: 8px 16px;
   height: auto;
@@ -446,7 +493,7 @@ export default {
 
 @media (prefers-color-scheme: dark) {
   .github-button {
-    background: rgba(0, 0, 0, 0.6);
+    background: #262626;
     color: #fff;
   }
   
@@ -471,6 +518,49 @@ export default {
 
   .github-button .anticon {
     font-size: 16px;
+  }
+}
+
+/* 添加主题切换按钮样式 */
+.theme-switch {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+.theme-switch .ant-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 修改暗色模式样式以配合 Ant Design Vue 的暗色主题 */
+[data-theme='dark'] {
+  background-color: #141414;
+}
+
+[data-theme='dark'] .github-button,
+[data-theme='dark'] .github-link,
+[data-theme='dark'] .theme-switch .ant-btn {
+  background: #262626;
+}
+
+/* 响应式样式 */
+@media screen and (max-width: 576px) {
+  .theme-switch {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .theme-switch .ant-btn {
+    width: 32px;
+    height: 32px;
   }
 }
 </style>

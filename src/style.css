@@ -60,12 +60,9 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
   min-height: 100vh;
-  background-color: inherit;
+  background-color: #F9F9F9;
 }
 
 @media (prefers-color-scheme: light) {
@@ -85,4 +82,8 @@ button:focus-visible {
   :root {
     background-color: #141414;
   }
+}
+
+[data-theme='dark'] #app {
+  background-color: #141414;
 }
